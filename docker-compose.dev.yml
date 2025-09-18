@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  mongo:
+    image: mongo:6
+    restart: unless-stopped
+    ports: ["27017:27017"]
+  orchestrator:
+    build: ./orchestrator
+    env_file: ./orchestrator/.env.example
+    ports: ["8080:8080"]
+    depends_on: [mongo]
+  worker:
+    build: ./worker
+    env_file: ./worker/.env.example
+    ports: ["8081:8081"]
+    depends_on: [mongo]
