@@ -1,6 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import ConfigurationError
-from ..core.config import settings   # <-- antes decía ".config", cámbialo
+from ..core.config import settings
 
 
 client_kwargs: dict = {}

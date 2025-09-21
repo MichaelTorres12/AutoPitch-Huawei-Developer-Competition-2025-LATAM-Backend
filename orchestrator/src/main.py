@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .core.config import settings
 from .db.mongo import mongo_client, jobs
 from .routers import jobs as jobs_router
+from .routers import uploads as uploads_router
 from fastapi.responses import JSONResponse
 import json
 from bson import json_util
@@ -40,6 +41,7 @@ async def init_db():
         print("DB init error:", e)
 
 app.include_router(jobs_router.router)
+app.include_router(uploads_router.router)
 
 
 @app.on_event("shutdown")

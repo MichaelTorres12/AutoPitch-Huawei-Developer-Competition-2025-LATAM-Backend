@@ -15,7 +15,7 @@ def presign_put(key: str) -> str:
     cli = _client()
     resp = cli.createSignedUrl(
         'PUT',
-        settings.OBS_BUCKET_UPLOADS,
+        settings.BUCKET_UPLOADS,
         key,
         expires=settings.OBS_PUT_EXPIRES
     )
@@ -25,7 +25,7 @@ def presign_get_artifact(key: str) -> str:
     cli = _client()
     resp = cli.createSignedUrl(
         'GET',
-        settings.OBS_BUCKET_ARTIFACTS,
+        settings.BUCKET_ARTIFACTS,
         key,
         expires=settings.OBS_GET_EXPIRES
     )
@@ -33,5 +33,26 @@ def presign_get_artifact(key: str) -> str:
 
 def object_exists_in_uploads(key: str) -> bool:
     cli = _client()
-    r = cli.getObjectMetadata(settings.OBS_BUCKET_UPLOADS, key)
+    r = cli.getObjectMetadata(settings.BUCKET_UPLOADS, key)
     return r.status < 300
+
+
+def upload_bytes_to_uploads(key: str, data: bytes, content_type: str | None = None) -> None:
+    cli = _client()
+    # Set HTTP header via 'headers' param; 'contentType' kwarg is not supported
+    headers = {"Content-Type": content_type} if content_type else None
+    resp = cli.putContent(settings.BUCKET_UPLOADS, key, data, headers=headers)
+    if not (200 <= resp.status < 300):
+        # Minimal error surface; caller handles exceptions
+        raise RuntimeError(f"OBS putContent failed: {resp.status}")
+
+
+def presign_get_upload(key: str) -> str:
+    cli = _client()
+    resp = cli.createSignedUrl(
+        'GET',
+        settings.BUCKET_UPLOADS,
+        key,
+        expires=settings.OBS_GET_EXPIRES
+    )
+    return resp['signedUrl']
