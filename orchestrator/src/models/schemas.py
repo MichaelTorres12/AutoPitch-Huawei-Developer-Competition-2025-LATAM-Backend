@@ -22,6 +22,9 @@ JobTone = Literal["technical","executive","inspiring"]
 JobGoal = Literal["investors","hackathon","sales"]
 JobStatus = Literal["created","uploading","uploaded","processing","done","error"]
 
+# Pitch schemas
+PitchStatus = Literal["queued","processing","completed","failed"]
+
 
 class JobIn(BaseModel):
     goal: JobGoal
@@ -65,3 +68,44 @@ class JobOut(BaseModel):
     updated_at: datetime
     error_msg: Optional[str] = None
     downloadUrl: Optional[str] = None
+
+
+class PitchIn(BaseModel):
+    uploadId: str
+
+    @field_validator("uploadId")
+    @classmethod
+    def validate_upload_id(cls, v: str) -> str:
+        if not ObjectId.is_valid(v):
+            raise ValueError("Invalid uploadId format")
+        return v
+
+
+class PitchDB(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    uploadId: str
+    status: PitchStatus = "queued"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    error_msg: Optional[str] = None
+    # Artifacts keys
+    deck_key: Optional[str] = None
+    script_key: Optional[str] = None
+    preview_key: Optional[str] = None
+
+    class Config:
+        populate_by_name = True
+        arbitrary_types_allowed = True
+
+
+class PitchOut(BaseModel):
+    id: str
+    uploadId: str
+    status: PitchStatus
+    created_at: datetime
+    updated_at: datetime
+    error_msg: Optional[str] = None
+    # URLs firmadas para descarga
+    deckUrl: Optional[str] = None
+    scriptUrl: Optional[str] = None
+    previewUrl: Optional[str] = None

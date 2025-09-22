@@ -1,0 +1,22 @@
+# Levantar e instlaar todo:
+py -3.11 -m venv .venv
+
+# Instalar dependencias python
+pip install --upgrade pip / python.exe -m pip install --upgrade pip
+# despues:
+pip install -r requirements.txt --no-cache-dir
+
+# Levantar el servidor:
+.\.venv\Scripts\Activate.ps1
+
+# Levantar el servidor
+python -m uvicorn src.main:app --reload --port 8080
+
+# Comprobar que funciona:
+http://127.0.0.1:8080/health
+# Ping a la DB
+http://127.0.0.1:8080/db/ping
+
+
+
+## * Emiliano trabajar los nuevos endpoints para el Orchestrator (chatGPT revisar chat)
