@@ -4,6 +4,7 @@ from .core.config import settings
 from .db.mongo import mongo_client, jobs
 from .routers import jobs as jobs_router
 from .routers import uploads as uploads_router
+from .routers import pitches as pitches_router
 from fastapi.responses import JSONResponse
 import json
 from bson import json_util
@@ -35,13 +36,20 @@ async def db_ping():
 async def init_db():
     try:
         await mongo_client.admin.command("ping")
+        # Jobs collection indices
         await jobs.create_index([( "status", 1 ), ( "created_at", 1 )])
         await jobs.create_index([( "created_at", -1 )])
+        # Pitches collection indices
+        pitches = mongo_client.get_default_database()["pitches"]
+        await pitches.create_index([( "status", 1 ), ( "created_at", 1 )])
+        await pitches.create_index([( "created_at", -1 )])
+        await pitches.create_index([( "uploadId", 1 )])
     except Exception as e:
         print("DB init error:", e)
 
 app.include_router(jobs_router.router)
 app.include_router(uploads_router.router)
+app.include_router(pitches_router.router)
 
 
 @app.on_event("shutdown")

@@ -56,3 +56,22 @@ def presign_get_upload(key: str) -> str:
         expires=settings.OBS_GET_EXPIRES
     )
     return resp['signedUrl']
+
+
+def presign_get_pitch_artifact(key: str) -> str:
+    """Generate presigned URL for pitch artifacts (deck, script, preview)"""
+    cli = _client()
+    resp = cli.createSignedUrl(
+        'GET',
+        settings.BUCKET_ARTIFACTS,
+        key,
+        expires=settings.OBS_GET_EXPIRES
+    )
+    return resp['signedUrl']
+
+
+def pitch_artifact_exists(key: str) -> bool:
+    """Check if a pitch artifact exists in OBS"""
+    cli = _client()
+    r = cli.getObjectMetadata(settings.BUCKET_ARTIFACTS, key)
+    return r.status < 300
