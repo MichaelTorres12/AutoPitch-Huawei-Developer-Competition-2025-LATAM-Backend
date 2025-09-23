@@ -25,5 +25,9 @@ http://127.0.0.1:8080/health
 http://127.0.0.1:8080/db/ping
 
 
+#
+pip install python-multipart
+
+python -m uvicorn src.main:app --reload --host 0.0.0.0 --port 8080
 
 ## * Emiliano trabajar los nuevos endpoints para el Orchestrator (chatGPT revisar chat)

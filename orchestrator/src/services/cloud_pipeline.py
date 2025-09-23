@@ -37,7 +37,7 @@ MPC_TOKEN = (os.getenv("MPC_TOKEN") or "").strip()  # Si presente, usar X-Auth-T
 
 # SIS (short-audio con AK/SK)
 SIS_PROJECT_ID = os.getenv("SIS_PROJECT_ID", "")
-SIS_ENDPOINT = os.getenv("SIS_ENDPOINT", "https://sis-ext.ap-southeast-3.myhuaweicloud.com")
+SIS_ENDPOINT = os.getenv("SIS_ENDPOINT", "https://sis.eu-west-0.myhuaweicloud.com")
 SIS_LANGUAGE = os.getenv("SIS_LANGUAGE", "en-US")  # 'es-ES' o 'en-US'
 SIS_TOKEN = (os.getenv("SIS_TOKEN") or "").strip()  # Si presente, usar X-Auth-Token en lugar de firma AK/SK
 SIS_PROPERTY = (os.getenv("SIS_PROPERTY") or "").strip()  # Si presente, usar como property de Short Audio
@@ -512,6 +512,9 @@ def sis_transcribe_from_obs(obs_audio_url: str, language="es-ES") -> Dict[str,An
         # Cuando se usa AK/SK, algunos despliegues requieren el host sin "-ext"
         sis_endpoint_eff = sis_endpoint_eff.replace("sis-ext.", "sis.")
         _log("sis.endpoint.adjust", original=SIS_ENDPOINT, effective=sis_endpoint_eff)
+    
+    # Log del endpoint que se está usando
+    _log("sis.endpoint.final", endpoint=sis_endpoint_eff, has_token=bool(SIS_TOKEN))
 
     # Si hay token IAM, usar el esquema de Postman: {"config": {"audio_format","property"}, "data"}
     try:
@@ -579,6 +582,20 @@ def sis_transcribe_from_obs(obs_audio_url: str, language="es-ES") -> Dict[str,An
             raise
         else:
             # Fallback solo si no estricto
+            demo = [
+                {"text":"(fallback) Bienvenidos al demo.", "start":0.0, "end":2.0},
+                {"text":"(fallback) Aquí mostramos la compra y el reporte.", "start":5.0, "end":10.0},
+                {"text":"(fallback) Exportamos a Excel y finalizamos.", "start":25.0, "end":28.0},
+            ]
+            out = {"sentences": demo, "duration_sec": 30.0}
+            _log("sis.transcribe.done.fallback", sentences=len(out["sentences"]), duration_sec=out["duration_sec"]) 
+            return out
+    except Exception as e:
+        _log("sis.unexpected.exception", error=str(e))
+        if SIS_STRICT:
+            raise
+        else:
+            # Fallback para cualquier otro error
             demo = [
                 {"text":"(fallback) Bienvenidos al demo.", "start":0.0, "end":2.0},
                 {"text":"(fallback) Aquí mostramos la compra y el reporte.", "start":5.0, "end":10.0},
