@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\Emiliano\Desktop\PROYECTOS\AutoPitch-Huawei-Developer-Competition-2025-LATAM-Backend\orchestrator\.venv
+set VIRTUAL_ENV=C:\Users\Michael Torres\Desktop\AutoPitch-Backend\orchestrator\.venv
 
 if not defined PROMPT set PROMPT=$P$G
 

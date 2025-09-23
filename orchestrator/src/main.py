@@ -5,6 +5,8 @@ from .db.mongo import mongo_client, jobs
 from .routers import jobs as jobs_router
 from .routers import uploads as uploads_router
 from .routers import pitches as pitches_router
+from .routers import cloud as cloud_router
+from .routers import obs_sign as obs_sign_router
 from fastapi.responses import JSONResponse
 import json
 from bson import json_util
@@ -50,7 +52,10 @@ async def init_db():
 app.include_router(jobs_router.router)
 app.include_router(uploads_router.router)
 app.include_router(pitches_router.router)
+app.include_router(cloud_router.router)
+app.include_router(obs_sign_router.router)
 
+app.include_router(cloud_router.router, prefix="/cloud", tags=["cloud"])
 
 @app.on_event("shutdown")
 async def shutdown_db():

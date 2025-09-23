@@ -1,13 +1,20 @@
 # Levantar e instlaar todo:
 py -3.11 -m venv .venv
 
+# Levantar el servidor:
+.\.venv\Scripts\Activate.ps1
+
 # Instalar dependencias python
 pip install --upgrade pip / python.exe -m pip install --upgrade pip
+
 # despues:
 pip install -r requirements.txt --no-cache-dir
 
 # Levantar el servidor:
 .\.venv\Scripts\Activate.ps1
+
+#Agregar lo siguiente siempre dentro de la terminal con el entorno encendido:
+python -c "from src.main import app; print('✅ App imports successfully')"
 
 # Levantar el servidor
 python -m uvicorn src.main:app --reload --port 8080

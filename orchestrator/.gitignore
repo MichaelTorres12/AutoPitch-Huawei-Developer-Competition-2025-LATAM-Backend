@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.env.*
+pip-cache/
+.idea/
+.vscode/
+.venv/
+*.venv/
+venv/
+orchestrator/.venv
+**/.venv/
